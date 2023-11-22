@@ -5,6 +5,8 @@ import discord
 from discord.ext import commands
 import os
 
+
+
 TOKEN = "PASTE_YOUR_DISCORD_BOT_TOKEN_HERE"
 WARNING = """
 Warning! this method of recording is VERY unstable at the moment. I can currently do 25 fps @ 
@@ -54,4 +56,12 @@ async def recordCommand(interaction:discord.Interaction, duration:int=5):
     os.remove("output.avi")                                             # removes the file from the computer
 
 
-bot.run(TOKEN)
+
+# still under development
+@tree.command(name="command", description="Runs a Command Line Interface (CLI) command")
+async def commandlineCommand(interaction:discord.Interaction, command:str):
+    result = os.popen(command).read()
+    await interaction.response.send_message(f"Done! result : `{result}`")
+
+
+bot.run(MY_TOKEN)
