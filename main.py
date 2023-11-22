@@ -42,7 +42,7 @@ async def screenshotCommand(interaction:discord.Interaction, delay:int=0):
 
 
 
-@tree.command(name="record", description="records the screen for a set duration and framerate")
+@tree.command(name="record", description="Records the screen for a set duration and framerate")
 async def recordCommand(interaction:discord.Interaction, duration:int=5):
     await interaction.channel.send(WARNING)                             # Sends a warning message to the channel
     await interaction.response.defer()                                  # defers the interaction just in case of delay, which there will be
