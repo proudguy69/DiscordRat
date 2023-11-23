@@ -4,10 +4,11 @@ import ffmpeg
 import discord
 from discord.ext import commands
 import os
+import json
 
-
-TOKEN = "PASTE_YOUR_DISCORD_BOT_TOKEN_HERE"
-
+# since i am stupid and exposed my bot token, we got this
+data = json.load(open("settings.json"))
+TOKEN = data["token"]
 
 intents = discord.Intents.all()                         # intents variable for the bots intents
 bot = commands.Bot(command_prefix='?', intents=intents) # bot variable holding the bot class
@@ -64,4 +65,4 @@ async def commandlineCommand(interaction:discord.Interaction, command:str):
     await interaction.response.send_message(f"Done! result : `{result}`")
 
 
-bot.run(MY_TOKEN)
+bot.run(TOKEN)
