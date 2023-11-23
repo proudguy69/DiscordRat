@@ -6,7 +6,6 @@ from discord.ext import commands
 import os
 
 
-MY_TOKEN = "ODYyNzI3Mjk0MDUyMDczNTEy.GS0RiI.2zA2troKzd-IzspDNcvsExJlmDmNZjnB_t6I54"
 TOKEN = "PASTE_YOUR_DISCORD_BOT_TOKEN_HERE"
 
 
